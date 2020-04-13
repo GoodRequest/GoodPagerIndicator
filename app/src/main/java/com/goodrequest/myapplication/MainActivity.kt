@@ -1,4 +1,4 @@
-package xyz.kandrac.myapplication
+package com.goodrequest.myapplication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

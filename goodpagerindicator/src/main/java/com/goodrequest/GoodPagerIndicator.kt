@@ -1,4 +1,4 @@
-package xyz.kandrac.goodpagerindicator
+package com.goodrequest
 
 import android.animation.ArgbEvaluator
 import android.annotation.SuppressLint
