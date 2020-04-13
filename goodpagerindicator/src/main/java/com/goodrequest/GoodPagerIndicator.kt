@@ -19,6 +19,7 @@ import androidx.annotation.AttrRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import kotlin.math.absoluteValue
+import kotlin.math.max
 import kotlin.math.min
 
 private const val linearInterpolator = 0
@@ -280,8 +281,8 @@ class GoodPagerIndicator @JvmOverloads constructor(
 
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
             super.onMeasure(
-                MeasureSpec.makeMeasureSpec(maxSize + spacing, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(maxSize, MeasureSpec.EXACTLY)
+                MeasureSpec.makeMeasureSpec(max(minSize, maxSize) + spacing, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(max(minSize, maxSize), MeasureSpec.EXACTLY)
             )
         }
 
