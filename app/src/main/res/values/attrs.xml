@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SpanViewPagerIndicator">
+        <attr name="indicator_dot_min_size" format="dimension"/>
+        <attr name="indicator_dot_max_size" format="dimension"/>
+        <attr name="indicator_dot_spacing" format="dimension"/>
+        <attr name="indicator_resizing_span" format="integer"/>
+        <attr name="indicator_dot_active_color" format="color"/>
+        <attr name="indicator_dot_inactive_color" format="color"/>
+        <attr name="indicator_interpolator" format="enum">
+            <enum name="linear" value="0"/>
+            <enum name="accelerate" value="1"/>
+            <enum name="decelerate" value="2"/>
+            <enum name="bounce" value="3"/>
+            <enum name="overshoot" value="4"/>
+        </attr>
+    </declare-styleable>
+</resources>
