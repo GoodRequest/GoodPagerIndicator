@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="SpanViewPagerIndicator">
+    <declare-styleable name="GoodPagerIndicator">
         <attr name="indicator_dot_min_size" format="dimension"/>
         <attr name="indicator_dot_max_size" format="dimension"/>
         <attr name="indicator_dot_spacing" format="dimension"/>

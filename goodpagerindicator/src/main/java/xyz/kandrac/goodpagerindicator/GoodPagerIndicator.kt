@@ -1,4 +1,4 @@
-package xyz.kandrac.myapplication
+package xyz.kandrac.goodpagerindicator
 
 import android.animation.ArgbEvaluator
 import android.annotation.SuppressLint
@@ -35,7 +35,7 @@ private const val defaultActiveColorAttrRes = android.R.attr.colorAccent
 private const val defaultInactiveColorAttrRes = android.R.attr.colorPrimary
 private const val defaultInterpolator = linearInterpolator
 
-class SpanViewPagerIndicator @JvmOverloads constructor(
+class GoodPagerIndicator @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
@@ -77,17 +77,17 @@ class SpanViewPagerIndicator @JvmOverloads constructor(
 
         context.theme.obtainStyledAttributes(
             attrs,
-            R.styleable.SpanViewPagerIndicator,
+            R.styleable.GoodPagerIndicator,
             0, 0
         ).apply {
             try {
-                dotMinSize = getDimensionPixelSize(R.styleable.SpanViewPagerIndicator_indicator_dot_min_size, (defaultMinDotSizeDp * context.resources.displayMetrics.density).toInt())
-                dotMaxSize = getDimensionPixelSize(R.styleable.SpanViewPagerIndicator_indicator_dot_max_size, (defaultMaxDotSizeDp * context.resources.displayMetrics.density).toInt())
-                dotSpacing = getDimensionPixelSize(R.styleable.SpanViewPagerIndicator_indicator_dot_spacing, (defaultDotSpacingDp * context.resources.displayMetrics.density).toInt())
-                resizingSpan = getInt(R.styleable.SpanViewPagerIndicator_indicator_resizing_span, defaultSpanSize)
-                activeColor = getColor(R.styleable.SpanViewPagerIndicator_indicator_dot_active_color, context.fetchColor(defaultActiveColorAttrRes))
-                inactiveColor = getColor(R.styleable.SpanViewPagerIndicator_indicator_dot_inactive_color, context.fetchColor(defaultInactiveColorAttrRes))
-                interpolator = when (getInt(R.styleable.SpanViewPagerIndicator_indicator_interpolator, defaultInterpolator)) {
+                dotMinSize = getDimensionPixelSize(R.styleable.GoodPagerIndicator_indicator_dot_min_size, (defaultMinDotSizeDp * context.resources.displayMetrics.density).toInt())
+                dotMaxSize = getDimensionPixelSize(R.styleable.GoodPagerIndicator_indicator_dot_max_size, (defaultMaxDotSizeDp * context.resources.displayMetrics.density).toInt())
+                dotSpacing = getDimensionPixelSize(R.styleable.GoodPagerIndicator_indicator_dot_spacing, (defaultDotSpacingDp * context.resources.displayMetrics.density).toInt())
+                resizingSpan = getInt(R.styleable.GoodPagerIndicator_indicator_resizing_span, defaultSpanSize)
+                activeColor = getColor(R.styleable.GoodPagerIndicator_indicator_dot_active_color, context.fetchColor(defaultActiveColorAttrRes))
+                inactiveColor = getColor(R.styleable.GoodPagerIndicator_indicator_dot_inactive_color, context.fetchColor(defaultInactiveColorAttrRes))
+                interpolator = when (getInt(R.styleable.GoodPagerIndicator_indicator_interpolator, defaultInterpolator)) {
                         linearInterpolator -> LinearInterpolator()
                         accelerateInterpolator -> AccelerateInterpolator()
                         decelerateInterpolator -> DecelerateInterpolator()
