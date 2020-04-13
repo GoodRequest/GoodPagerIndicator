@@ -1,4 +1,4 @@
-# SpanViewPagerIndicator
+# GoodPagerIndicator
   
 Custom implementation of view pager indicator. Current scroll value can be distributed between more "Dots", not just adjacent ones.
 
@@ -7,7 +7,24 @@ Currently only single visual is supported as well as only ViewPager2 as indicato
 <img src="./presentation/sample.gif" alt="Sample">  
  
 ## Example usage
-Create your view in XML with `androidx.viewpager2.widget.ViewPager2` and the `SpanViewPagerIndicator`. To see explanation of used attributes, please have a look at [Supported attributes section](#supported-attributes).
+Library is stored on JitPack, so you can include it in your project using this config:
+
+Root [build.gradle](./build.gradle) 
+
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+
+And in project [build.gradle](./app/build.gradle) use
+
+    dependencies {
+        implementation 'com.github.GoodRequest:GoodPagerIndicator:0.1.1'
+    }
+
+After successful sync, create your view using XML with `androidx.viewpager2.widget.ViewPager2` and the `GoodPagerIndicator`. To see explanation of used attributes, please have a look at [Supported attributes section](#supported-attributes).
 
     <com.goodrequest.GoodPagerIndicator
       android:id="@+id/indicator"
