@@ -20,13 +20,133 @@
         android:padding="12dp"
         app:indicator_dot_active_color="@android:color/black"
         app:indicator_dot_inactive_color="@android:color/darker_gray"
-        app:indicator_dot_max_size="12dp"
-        app:indicator_dot_min_size="4dp"
-        app:indicator_dot_spacing="3dp"
-        app:indicator_interpolator="accelerate"
-        app:indicator_resizing_span="4"
+        app:indicator_dot_min_size="1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pager" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/indicator">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/minSizeSeekBarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Min Size"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/minSizeSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:max="19"
+                app:layout_constraintTop_toBottomOf="@+id/minSizeSeekBarTitle" />
+
+            <TextView
+                android:id="@+id/maxSizeSeekBarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Max Size"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/minSizeSeekBar" />
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/maxSizeSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:max="16"
+                app:layout_constraintTop_toBottomOf="@+id/maxSizeSeekBarTitle" />
+
+            <TextView
+                android:id="@+id/dotSpacingTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Spacing"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/maxSizeSeekBar" />
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/dotSpacingSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:max="10"
+                app:layout_constraintTop_toBottomOf="@+id/dotSpacingTitle" />
+
+            <TextView
+                android:id="@+id/dotSpanSizeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Span Size"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dotSpacingSeekBar" />
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/dotSpanSizeSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:max="3"
+                app:layout_constraintTop_toBottomOf="@+id/dotSpanSizeTitle" />
+
+            <Button
+                android:id="@+id/interpolatorLinear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Linear"
+                app:layout_constraintEnd_toStartOf="@+id/interpolatorAccelerate"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dotSpanSizeSeekBar" />
+
+            <Button
+                android:id="@+id/interpolatorAccelerate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accelerate"
+                app:layout_constraintEnd_toEndOf="@+id/interpolatorDecelerate"
+                app:layout_constraintStart_toEndOf="@+id/interpolatorLinear"
+                app:layout_constraintTop_toBottomOf="@+id/dotSpanSizeSeekBar" />
+
+            <Button
+                android:id="@+id/interpolatorDecelerate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Decelerate"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/interpolatorAccelerate"
+                app:layout_constraintTop_toBottomOf="@+id/dotSpanSizeSeekBar" />
+
+            <Button
+                android:id="@+id/interpolatorBounce"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bounce"
+                app:layout_constraintEnd_toStartOf="@+id/interpolatorOvershoot"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/interpolatorDecelerate" />
+
+            <Button
+                android:id="@+id/interpolatorOvershoot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Overshot"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/interpolatorLinear"
+                app:layout_constraintTop_toBottomOf="@+id/interpolatorDecelerate" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

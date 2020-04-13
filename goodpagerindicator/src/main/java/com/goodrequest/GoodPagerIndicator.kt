@@ -27,14 +27,19 @@ private const val decelerateInterpolator = 2
 private const val bounceInterpolator = 3
 private const val overshotInterpolator = 4
 
-private const val defaultMinDotSizeDp = 2
-private const val defaultMaxDotSizeDp = 4
+private const val defaultMinDotSizeDp = 4
+private const val defaultMaxDotSizeDp = 12
 private const val defaultDotSpacingDp = 4
 private const val defaultSpanSize = 3
 private const val defaultActiveColorAttrRes = android.R.attr.colorAccent
 private const val defaultInactiveColorAttrRes = android.R.attr.colorPrimary
 private const val defaultInterpolator = linearInterpolator
 
+private const val previewPosition = 3
+private const val previewOffset = 0f
+private const val previewItemCount = 6
+
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class GoodPagerIndicator @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
@@ -43,33 +48,61 @@ class GoodPagerIndicator @JvmOverloads constructor(
     private var dataObserver: AdapterDataObserver? = null
     private var pageChangeCallback: PageChangeCallback? = null
 
-    private var dotMinSize: Int = 0
-    private var dotMaxSize: Int = 0
-    private var dotSpacing: Int = 0
-    private var resizingSpan: Int = 0
-    private var activeColor: Int = 0
-    private var inactiveColor: Int = 0
-    private var interpolator: BaseInterpolator = LinearInterpolator()
+    var dotMinSize: Int = 0
+        set(value) {
+            field = value
+            resetChildrenAttributes()
+        }
 
+    var dotMaxSize: Int = 0
+        set(value) {
+            field = value
+            resetChildrenAttributes()
+        }
+
+    var dotSpacing: Int = 0
+        set(value) {
+            field = value
+            resetChildrenAttributes()
+        }
+
+    var resizingSpan: Int = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var activeColor: Int = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var inactiveColor: Int = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var interpolator: BaseInterpolator = LinearInterpolator()
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     private val colorEvaluator = ArgbEvaluator()
     private val detector: GestureDetector
     private val gesturesCallback = object : GestureDetector.SimpleOnGestureListener() {
 
-        override fun onDown(e: MotionEvent?): Boolean {
-            return true
-        }
+        override fun onDown(e: MotionEvent?) = true
 
-        override fun onScroll(
-            e1: MotionEvent,
-            e2: MotionEvent,
-            distanceX: Float,
-            distanceY: Float
-        ): Boolean {
-            pager?.beginFakeDrag()
-            pager?.fakeDragBy(distanceX / (dotSpacing + dotMaxSize) * (pager?.width ?: 0))
-            return true
-        }
+        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float) =
+            pager?.let {
+                it.beginFakeDrag()
+                it.fakeDragBy(distanceX / (dotSpacing + dotMaxSize) * (pager?.width ?: 0))
+                true
+            } ?: false
+
     }
 
     init {
@@ -103,7 +136,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
         detector = GestureDetector(context, gesturesCallback)
 
         if (isInEditMode) {
-            redrawProgress(3, 0f)
+            redrawProgress(previewPosition, previewOffset)
         }
     }
 
@@ -133,7 +166,8 @@ class GoodPagerIndicator @JvmOverloads constructor(
     private fun redrawChildren() {
         if (pager?.adapter?.itemCount != childCount || isInEditMode) {
             removeAllViews()
-            for (i in 0 until (pager?.adapter?.itemCount ?: if (isInEditMode) 6 else 0)) {
+            for (i in 0 until (pager?.adapter?.itemCount
+                ?: if (isInEditMode) previewItemCount else 0)) {
                 super.addView(Dot(context).apply {
                     minSize = dotMinSize
                     maxSize = dotMaxSize
@@ -142,6 +176,16 @@ class GoodPagerIndicator @JvmOverloads constructor(
                         pager?.currentItem = i
                     }
                 }, i, generateDefaultLayoutParams())
+            }
+        }
+    }
+
+    private fun resetChildrenAttributes() {
+        for (i in 0 until childCount) {
+            (getChildAt(i) as Dot).apply {
+                minSize = dotMinSize
+                maxSize = dotMaxSize
+                spacing = dotSpacing
             }
         }
     }
@@ -201,14 +245,29 @@ class GoodPagerIndicator @JvmOverloads constructor(
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
         var minSize: Int = 0
+            set(value) {
+                field = value
+                requestLayout()
+                invalidate()
+            }
+
         var maxSize: Int = 0
+            set(value) {
+                field = value
+                requestLayout()
+                invalidate()
+            }
+
         var spacing: Int = 0
+            set(value) {
+                field = value
+                requestLayout()
+                invalidate()
+            }
 
         var progress: Float = 1.0f
             set(value) {
                 field = value
-
-                // TODO: check invalidation necessity
                 invalidate()
             }
 
@@ -216,8 +275,6 @@ class GoodPagerIndicator @JvmOverloads constructor(
             set(value) {
                 field = value
                 paint.color = value
-
-                // TODO: check invalidation necessity
                 invalidate()
             }
 

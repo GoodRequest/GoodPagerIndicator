@@ -56,8 +56,10 @@ List of currently supported [attributes](./goodpagerindicator/src/main/res/value
 6. **indicator_dot_inactive_color** : color of dot on inactive position (primary color by default)  
 7. **indicator_interpolator** : interpolator to be used for computing dot diameter. Recommended values are `linear` and `accelerate`
 
+Attributes can be changed using setters - `dotMinSize`, `dotMaxSize`, `dotSpacing`, `resizingSpan`,
+`activeColor`, `inactiveColor`, `interpolator`
+
 ## ToDo's
 1. Enable turn on/off swipe gestures
 2. Enable turn on/off click gestures
-3. Resolve in-project ToDo-s (questioning performance)
-4. Implement other visuals
+3. Implement other visuals

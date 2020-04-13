@@ -5,12 +5,33 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.*
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 
 private data class AdapterItem(val image: Int, val text: String, var selected: Boolean)
+
+private open class SimpleSeekBarListener : SeekBar.OnSeekBarChangeListener {
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+    }
+
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+    }
+
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+    }
+}
+
+fun SeekBar.onProgress(progressListener: (Int) -> Unit) {
+    setOnSeekBarChangeListener(object: SimpleSeekBarListener() {
+        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            progressListener(progress)
+        }
+    })
+}
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,6 +51,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         pager.adapter = Adapter(adapterItems)
         indicator.initWith(pager)
+
+        minSizeSeekBar.onProgress { indicator.dotMinSize = ((it + 1) * resources.displayMetrics.density).toInt() }
+        maxSizeSeekBar.onProgress { indicator.dotMaxSize = ((it + 4)  * resources.displayMetrics.density).toInt()}
+        dotSpacingSeekBar.onProgress { indicator.dotSpacing = (it  * resources.displayMetrics.density).toInt() }
+        dotSpanSizeSeekBar.onProgress { indicator.resizingSpan = ((it + 1) * resources.displayMetrics.density).toInt() }
+        interpolatorLinear.setOnClickListener { indicator.interpolator = LinearInterpolator() }
+        interpolatorAccelerate.setOnClickListener { indicator.interpolator = AccelerateInterpolator() }
+        interpolatorDecelerate.setOnClickListener { indicator.interpolator = DecelerateInterpolator() }
+        interpolatorBounce.setOnClickListener { indicator.interpolator = BounceInterpolator() }
+        interpolatorOvershoot.setOnClickListener { indicator.interpolator = OvershootInterpolator() }
     }
 
     private inner class Adapter(val adapterItems: Array<AdapterItem>) : RecyclerView.Adapter<Adapter.ViewHolder>() {
