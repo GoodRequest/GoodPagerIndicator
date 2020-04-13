@@ -1,5 +1,7 @@
 # GoodPagerIndicator
-  
+
+[![Release](https://jitpack.io/v/com.github.GoodRequest/GoodPagerIndicator.svg)](https://jitpack.io/#com.github.GoodRequest/GoodPagerIndicator)
+
 Custom implementation of view pager indicator. Current scroll value can be distributed between more "Dots", not just adjacent ones.
 
 Currently only single visual is supported as well as only ViewPager2 as indicator's target.  Please check following sample to make sure, this is exactly what you need. New behaviors and features will be added later:  
