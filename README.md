@@ -6,7 +6,9 @@ Custom implementation of view pager indicator. Current scroll value can be distr
 
 Currently only single visual is supported as well as only ViewPager2 as indicator's target.  Please check following sample to make sure, this is exactly what you need. New behaviors and features will be added later:  
   
-<img src="./presentation/sample.gif" alt="Sample">  
+<img src="./presentation/sample2.gif" alt="Sample Video" width="150">
+
+<img src="./presentation/sample3.png" alt="Sample screen" width="150">
  
 ## Example usage
 Library is stored on JitPack, so you can include it in your project using this config:
@@ -23,7 +25,7 @@ Root [build.gradle](./build.gradle)
 And in project [build.gradle](./app/build.gradle) use
 
     dependencies {
-        implementation 'com.github.GoodRequest:GoodPagerIndicator:0.1.1'
+        implementation 'com.github.GoodRequest:GoodPagerIndicator:X.X.X'
     }
 
 After successful sync, create your view using XML with `androidx.viewpager2.widget.ViewPager2` and the `GoodPagerIndicator`. To see explanation of used attributes, please have a look at [Supported attributes section](#supported-attributes).
