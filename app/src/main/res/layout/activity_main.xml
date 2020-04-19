@@ -18,9 +18,15 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:padding="12dp"
+        app:indicator_click_enabled="true"
         app:indicator_dot_active_color="@android:color/black"
         app:indicator_dot_inactive_color="@android:color/darker_gray"
+        app:indicator_dot_max_size="10dp"
         app:indicator_dot_min_size="1dp"
+        app:indicator_dot_spacing="2dp"
+        app:indicator_interpolator="linear"
+        app:indicator_resizing_span="3"
+        app:indicator_swipe_enabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pager" />
@@ -148,17 +154,17 @@
 
             <Button
                 android:id="@+id/swipeEnabled"
-                app:layout_constraintTop_toBottomOf="@+id/interpolatorOvershoot"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Turn on/off swipe gestures"
-                android:layout_height="wrap_content"/>
+                app:layout_constraintTop_toBottomOf="@+id/interpolatorOvershoot" />
 
             <Button
                 android:id="@+id/clickEnabled"
-                app:layout_constraintTop_toBottomOf="@+id/swipeEnabled"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Turn on/off click gestures"
-                android:layout_height="wrap_content"/>
+                app:layout_constraintTop_toBottomOf="@+id/swipeEnabled" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

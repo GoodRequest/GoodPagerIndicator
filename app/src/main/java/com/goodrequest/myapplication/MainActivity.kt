@@ -9,8 +9,10 @@ import android.view.animation.*
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.math.roundToInt
 
 private data class AdapterItem(val image: Int, val text: String, var selected: Boolean)
 
@@ -52,17 +54,45 @@ class MainActivity : AppCompatActivity() {
         pager.adapter = Adapter(adapterItems)
         indicator.initWith(pager)
 
-        minSizeSeekBar.onProgress { indicator.dotMinSize = ((it + 1) * resources.displayMetrics.density).toInt() }
+        // set seek-bars to match indicator internal values
+        minSizeSeekBar.progress = (indicator.dotMinSize / resources.displayMetrics.density).roundToInt()
+        maxSizeSeekBar.progress = (indicator.dotMaxSize / resources.displayMetrics.density).roundToInt() - 4
+        dotSpacingSeekBar.progress = (indicator.dotSpacing / resources.displayMetrics.density).roundToInt()
+        dotSpanSizeSeekBar.progress = indicator.resizingSpan - 1
+
+        minSizeSeekBar.onProgress { indicator.dotMinSize = (it * resources.displayMetrics.density).toInt() }
         maxSizeSeekBar.onProgress { indicator.dotMaxSize = ((it + 4)  * resources.displayMetrics.density).toInt()}
         dotSpacingSeekBar.onProgress { indicator.dotSpacing = (it  * resources.displayMetrics.density).toInt() }
-        dotSpanSizeSeekBar.onProgress { indicator.resizingSpan = ((it + 1) * resources.displayMetrics.density).toInt() }
-        interpolatorLinear.setOnClickListener { indicator.interpolator = LinearInterpolator() }
-        interpolatorAccelerate.setOnClickListener { indicator.interpolator = AccelerateInterpolator() }
-        interpolatorDecelerate.setOnClickListener { indicator.interpolator = DecelerateInterpolator() }
-        interpolatorBounce.setOnClickListener { indicator.interpolator = BounceInterpolator() }
-        interpolatorOvershoot.setOnClickListener { indicator.interpolator = OvershootInterpolator() }
-        swipeEnabled.setOnClickListener { indicator.swipeEnabled = !indicator.swipeEnabled }
-        clickEnabled.setOnClickListener { indicator.clickEnabled = !indicator.clickEnabled }
+        dotSpanSizeSeekBar.onProgress { indicator.resizingSpan = it + 1 }
+
+        interpolatorLinear.setOnClickListener {
+            indicator.interpolator = LinearInterpolator()
+            Toast.makeText(this, "LinearInterpolator selected", Toast.LENGTH_SHORT).show()
+        }
+        interpolatorAccelerate.setOnClickListener {
+            indicator.interpolator = AccelerateInterpolator()
+            Toast.makeText(this, "AccelerateInterpolator selected", Toast.LENGTH_SHORT).show()
+        }
+        interpolatorDecelerate.setOnClickListener {
+            indicator.interpolator = DecelerateInterpolator()
+            Toast.makeText(this, "DecelerateInterpolator selected", Toast.LENGTH_SHORT).show()
+        }
+        interpolatorBounce.setOnClickListener {
+            indicator.interpolator = BounceInterpolator()
+            Toast.makeText(this, "BounceInterpolator selected", Toast.LENGTH_SHORT).show()
+        }
+        interpolatorOvershoot.setOnClickListener {
+            indicator.interpolator = OvershootInterpolator()
+            Toast.makeText(this, "OvershootInterpolator selected", Toast.LENGTH_SHORT).show()
+        }
+        swipeEnabled.setOnClickListener {
+            indicator.swipeEnabled = !indicator.swipeEnabled
+            Toast.makeText(this, "swipe ${if (indicator.swipeEnabled) "enabled" else "disabled"}", Toast.LENGTH_SHORT).show()
+        }
+        clickEnabled.setOnClickListener {
+            indicator.clickEnabled = !indicator.clickEnabled
+            Toast.makeText(this, "click ${if (indicator.clickEnabled) "enabled" else "disabled"}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private inner class Adapter(val adapterItems: Array<AdapterItem>) : RecyclerView.Adapter<Adapter.ViewHolder>() {

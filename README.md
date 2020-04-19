@@ -63,3 +63,7 @@ Attributes can be changed using setters - `dotMinSize`, `dotMaxSize`, `dotSpacin
 
 ## ToDo's
 1. Implement other visuals
+
+## Known issues
+1. Setting span programmatically will not update layout properly
+2. Improper scroll event handling when minSize > maxSize
