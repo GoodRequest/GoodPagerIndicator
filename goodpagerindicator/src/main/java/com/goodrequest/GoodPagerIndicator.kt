@@ -1,7 +1,6 @@
 package com.goodrequest
 
 import android.animation.ArgbEvaluator
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Canvas
@@ -92,6 +91,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
         }
 
     var swipeEnabled: Boolean = true
+    var clickEnabled: Boolean = true
 
     private val colorEvaluator = ArgbEvaluator()
     private val detector: GestureDetector
@@ -132,6 +132,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
                         else -> throw IllegalArgumentException("Select proper value from enum")
                     }
                 swipeEnabled = getBoolean(R.styleable.GoodPagerIndicator_indicator_swipe_enabled, true)
+                clickEnabled = getBoolean(R.styleable.GoodPagerIndicator_indicator_click_enabled, true)
             } finally {
                 recycle()
             }
@@ -177,7 +178,9 @@ class GoodPagerIndicator @JvmOverloads constructor(
                     maxSize = dotMaxSize
                     spacing = dotSpacing
                     setOnClickListener {
-                        pager?.currentItem = i
+                        if (clickEnabled) {
+                            pager?.currentItem = i
+                        }
                     }
                 }, i, generateDefaultLayoutParams())
             }
@@ -228,17 +231,14 @@ class GoodPagerIndicator @JvmOverloads constructor(
     }
 
     // Gestures section
-    override fun onInterceptTouchEvent(ev: MotionEvent) = true
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent): Boolean {
+    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
         if (swipeEnabled) {
+            detector.onTouchEvent(event)
             if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
                 pager?.endFakeDrag()
-                return true
             }
         }
-        return detector.onTouchEvent(event)
+        return false
     }
 
 

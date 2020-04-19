@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         interpolatorBounce.setOnClickListener { indicator.interpolator = BounceInterpolator() }
         interpolatorOvershoot.setOnClickListener { indicator.interpolator = OvershootInterpolator() }
         swipeEnabled.setOnClickListener { indicator.swipeEnabled = !indicator.swipeEnabled }
+        clickEnabled.setOnClickListener { indicator.clickEnabled = !indicator.clickEnabled }
     }
 
     private inner class Adapter(val adapterItems: Array<AdapterItem>) : RecyclerView.Adapter<Adapter.ViewHolder>() {
