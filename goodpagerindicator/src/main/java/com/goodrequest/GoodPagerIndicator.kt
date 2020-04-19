@@ -102,7 +102,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float) =
             pager?.let {
                 it.beginFakeDrag()
-                it.fakeDragBy(distanceX / (dotSpacing + dotMaxSize) * (pager?.width ?: 0))
+                it.fakeDragBy(distanceX / (dotSpacing + max(dotMaxSize, dotMinSize)) * (pager?.width ?: 0))
                 true
             } ?: false
 
