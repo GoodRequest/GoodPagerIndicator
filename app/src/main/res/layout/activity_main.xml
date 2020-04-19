@@ -145,6 +145,13 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/interpolatorLinear"
                 app:layout_constraintTop_toBottomOf="@+id/interpolatorDecelerate" />
+
+            <Button
+                android:id="@+id/swipeEnabled"
+                app:layout_constraintTop_toBottomOf="@+id/interpolatorOvershoot"
+                android:layout_width="match_parent"
+                android:text="Turn on/off swipe gestures"
+                android:layout_height="wrap_content"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

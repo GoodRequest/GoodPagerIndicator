@@ -91,6 +91,8 @@ class GoodPagerIndicator @JvmOverloads constructor(
             invalidate()
         }
 
+    var swipeEnabled: Boolean = true
+
     private val colorEvaluator = ArgbEvaluator()
     private val detector: GestureDetector
     private val gesturesCallback = object : GestureDetector.SimpleOnGestureListener() {
@@ -129,6 +131,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
                         overshotInterpolator -> OvershootInterpolator()
                         else -> throw IllegalArgumentException("Select proper value from enum")
                     }
+                swipeEnabled = getBoolean(R.styleable.GoodPagerIndicator_indicator_swipe_enabled, true)
             } finally {
                 recycle()
             }
@@ -229,10 +232,11 @@ class GoodPagerIndicator @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        //
-        if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
-            pager?.endFakeDrag()
-            return true
+        if (swipeEnabled) {
+            if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
+                pager?.endFakeDrag()
+                return true
+            }
         }
         return detector.onTouchEvent(event)
     }

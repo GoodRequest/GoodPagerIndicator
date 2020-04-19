@@ -14,5 +14,6 @@
             <enum name="bounce" value="3"/>
             <enum name="overshoot" value="4"/>
         </attr>
+        <attr name="indicator_swipe_enabled" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -62,6 +62,5 @@ Attributes can be changed using setters - `dotMinSize`, `dotMaxSize`, `dotSpacin
 `activeColor`, `inactiveColor`, `interpolator`
 
 ## ToDo's
-1. Enable turn on/off swipe gestures
-2. Enable turn on/off click gestures
-3. Implement other visuals
+1. Enable turn on/off click gestures
+2. Implement other visuals
