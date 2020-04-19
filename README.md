@@ -66,3 +66,4 @@ Attributes can be changed using setters - `dotMinSize`, `dotMaxSize`, `dotSpacin
 
 ## Known issues
 1. Setting span programmatically will not update layout properly
+2. Interpolator that can return value > 1.0 won't fit dot into its boundaries
