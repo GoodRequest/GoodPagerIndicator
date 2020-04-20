@@ -34,13 +34,16 @@ After successful sync, create your view using XML with `androidx.viewpager2.widg
       android:id="@+id/indicator"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      app:indicator_dot_min_size="4dp"
-      app:indicator_dot_max_size="12dp"
-      app:indicator_dot_spacing="3dp"
-      app:indicator_resizing_span="4"
+      app:indicator_click_enabled="true"
       app:indicator_dot_active_color="@android:color/black"
       app:indicator_dot_inactive_color="@android:color/darker_gray"
-      app:indicator_interpolator="accelerate"/>
+      app:indicator_dot_max_size="10dp"
+      app:indicator_dot_min_size="0dp"
+      app:indicator_dot_size_factor="1.3"
+      app:indicator_dot_spacing="2dp"
+      app:indicator_interpolator="linear"
+      app:indicator_resizing_span="3"
+      app:indicator_swipe_enabled="true"/>
 
 In your activity, setup the `indicator` with given `view_pager` like this:
 
@@ -57,6 +60,9 @@ List of currently supported [attributes](./goodpagerindicator/src/main/res/value
 5. **indicator_dot_active_color** : color of dot on active position (accent color by default)  
 6. **indicator_dot_inactive_color** : color of dot on inactive position (primary color by default)  
 7. **indicator_interpolator** : interpolator to be used for computing dot diameter. Recommended values are `linear` and `accelerate`
+8. **indicator_swipe_enabled** : enable / disable swipe gestures on indicator
+9. **indicator_click_enabled** : enable / disable click gestures on indicator dots
+10. **indicator_dot_size_factor** : multiplier for dot 'available space for drawing' (onMeasure)
 
 Attributes can be changed using setters - `dotMinSize`, `dotMaxSize`, `dotSpacing`, `resizingSpan`,
 `activeColor`, `inactiveColor`, `interpolator`
