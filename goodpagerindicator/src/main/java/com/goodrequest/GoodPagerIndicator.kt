@@ -90,6 +90,24 @@ class GoodPagerIndicator @JvmOverloads constructor(
             invalidate()
         }
 
+
+    /**
+     * This parameter will extend drawing boundaries multiplying them by this factor.
+     * If your dot wants to take 100px and the factor is set to 2.0, the dot will have
+     * 200px available and will be drawn in center of available space.
+     *
+     * Size factor is useful especially if your [interpolator] can return values greater then
+     * 1.0. In such case [Dot] will draw outside its boundaries.
+     *
+     * It is recommended to use [dotSpacing] and padding instead of [dotSizeFactor]
+     * if your interpolator do not return values greater then 1.0
+     */
+    var dotSizeFactor: Float = 1.0f
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     var swipeEnabled: Boolean = true
     var clickEnabled: Boolean = true
 
@@ -133,6 +151,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
                     }
                 swipeEnabled = getBoolean(R.styleable.GoodPagerIndicator_indicator_swipe_enabled, true)
                 clickEnabled = getBoolean(R.styleable.GoodPagerIndicator_indicator_click_enabled, true)
+                dotSizeFactor = getFloat(R.styleable.GoodPagerIndicator_indicator_dot_size_factor, 1.0f)
             } finally {
                 recycle()
             }
@@ -177,6 +196,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
                     minSize = dotMinSize
                     maxSize = dotMaxSize
                     spacing = dotSpacing
+                    sizeFactor = dotSizeFactor
                     setOnClickListener {
                         if (clickEnabled) {
                             pager?.currentItem = i
@@ -283,10 +303,16 @@ class GoodPagerIndicator @JvmOverloads constructor(
                 invalidate()
             }
 
+        var sizeFactor: Float = 1.0f
+            set(value) {
+                field = value
+                invalidate()
+            }
+
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
             super.onMeasure(
-                MeasureSpec.makeMeasureSpec(max(minSize, maxSize) + spacing, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(max(minSize, maxSize), MeasureSpec.EXACTLY)
+                MeasureSpec.makeMeasureSpec((max(minSize, maxSize) * sizeFactor).toInt() + spacing, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec((max(minSize, maxSize) * sizeFactor).toInt(), MeasureSpec.EXACTLY)
             )
         }
 

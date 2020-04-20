@@ -16,5 +16,6 @@
         </attr>
         <attr name="indicator_swipe_enabled" format="boolean"/>
         <attr name="indicator_click_enabled" format="boolean"/>
+        <attr name="indicator_dot_size_factor" format="float"/>
     </declare-styleable>
 </resources>
