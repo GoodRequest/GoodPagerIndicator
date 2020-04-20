@@ -69,7 +69,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
     var resizingSpan: Int = 0
         set(value) {
             field = value
-            invalidate()
+            redrawProgress(force = true)
         }
 
     var activeColor: Int = 0
@@ -87,7 +87,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
     var interpolator: BaseInterpolator = LinearInterpolator()
         set(value) {
             field = value
-            invalidate()
+            redrawProgress(force = true)
         }
 
 
@@ -110,6 +110,9 @@ class GoodPagerIndicator @JvmOverloads constructor(
 
     var swipeEnabled: Boolean = true
     var clickEnabled: Boolean = true
+
+    private var lastPosition = previewPosition      // last known "selected item" position
+    private var lastPositionOffset = previewOffset  // last known "selected item" offset position
 
     private val colorEvaluator = ArgbEvaluator()
     private val detector: GestureDetector
@@ -166,12 +169,26 @@ class GoodPagerIndicator @JvmOverloads constructor(
 
     fun initWith(pager: ViewPager2) {
         this.pager = pager
-        redrawChildren()
+        redrawChildren(false)
     }
 
     // computation section
-    private fun redrawProgress(position: Int, positionOffset: Float) {
-        redrawChildren()
+    /**
+     * Redraw children based on newly set [position] and [positionOffset]. If [force]
+     * is set to true, the dots will be forcefully redrawn (removed and added). Do not
+     * call this function with [force] set to true too often, since it is resource
+     * consuming operation (call it in setters etc.)
+     *
+     * @see [ViewPager2.OnPageChangeCallback]
+     */
+    private fun redrawProgress(
+        position: Int = lastPosition,
+        positionOffset: Float = lastPositionOffset,
+        force: Boolean = false
+    ) {
+        lastPosition = position
+        lastPositionOffset = positionOffset
+        redrawChildren(force)
         for (i in 0 until childCount) {
             val distance =
                 (i - position).absoluteValue + if (i <= position) positionOffset else -positionOffset
@@ -187,8 +204,8 @@ class GoodPagerIndicator @JvmOverloads constructor(
         }
     }
 
-    private fun redrawChildren() {
-        if (pager?.adapter?.itemCount != childCount || isInEditMode) {
+    private fun redrawChildren(force: Boolean) {
+        if (pager?.adapter?.itemCount != childCount || isInEditMode || force) {
             removeAllViews()
             for (i in 0 until (pager?.adapter?.itemCount
                 ?: if (isInEditMode) previewItemCount else 0)) {
@@ -227,7 +244,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
     }
 
     private inner class AdapterDataObserver : RecyclerView.AdapterDataObserver() {
-        override fun onChanged() = redrawChildren()
+        override fun onChanged() = redrawChildren(false)
     }
 
     override fun onAttachedToWindow() {
