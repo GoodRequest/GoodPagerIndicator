@@ -8,14 +8,9 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.GestureDetector
-import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.*
-import android.widget.LinearLayout
 import androidx.annotation.AttrRes
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -35,18 +30,10 @@ private const val defaultActiveColorAttrRes = android.R.attr.colorAccent
 private const val defaultInactiveColorAttrRes = android.R.attr.colorPrimary
 private const val defaultInterpolator = linearInterpolator
 
-private const val previewPosition = 3
-private const val previewOffset = 0f
-private const val previewItemCount = 6
-
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class GoodPagerIndicator @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
-
-    private var pager: ViewPager2? = null
-    private var dataObserver: AdapterDataObserver? = null
-    private var pageChangeCallback: PageChangeCallback? = null
+) : BaseGoodPagerIndicator(context, attrs, defStyleAttr) {
 
     var dotMinSize: Int = 0
         set(value) {
@@ -69,7 +56,8 @@ class GoodPagerIndicator @JvmOverloads constructor(
     var resizingSpan: Int = 0
         set(value) {
             field = value
-            redrawProgress(force = true)
+            redrawChildren()
+            redraw()
         }
 
     var activeColor: Int = 0
@@ -87,9 +75,9 @@ class GoodPagerIndicator @JvmOverloads constructor(
     var interpolator: BaseInterpolator = LinearInterpolator()
         set(value) {
             field = value
-            redrawProgress(force = true)
+            redrawChildren()
+            redraw()
         }
-
 
     /**
      * This parameter will extend drawing boundaries multiplying them by this factor.
@@ -108,29 +96,9 @@ class GoodPagerIndicator @JvmOverloads constructor(
             invalidate()
         }
 
-    var swipeEnabled: Boolean = true
-    var clickEnabled: Boolean = true
-
-    private var lastPosition = previewPosition      // last known "selected item" position
-    private var lastPositionOffset = previewOffset  // last known "selected item" offset position
-
     private val colorEvaluator = ArgbEvaluator()
-    private val detector: GestureDetector
-    private val gesturesCallback = object : GestureDetector.SimpleOnGestureListener() {
-
-        override fun onDown(e: MotionEvent?) = true
-
-        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float) =
-            pager?.let {
-                it.beginFakeDrag()
-                it.fakeDragBy(distanceX / (dotSpacing + max(dotMaxSize, dotMinSize)) * (pager?.width ?: 0))
-                true
-            } ?: false
-
-    }
 
     init {
-        orientation = HORIZONTAL
 
         context.theme.obtainStyledAttributes(
             attrs,
@@ -159,17 +127,13 @@ class GoodPagerIndicator @JvmOverloads constructor(
                 recycle()
             }
         }
-
-        detector = GestureDetector(context, gesturesCallback)
-
-        if (isInEditMode) {
-            redrawProgress(previewPosition, previewOffset)
-        }
     }
 
-    fun initWith(pager: ViewPager2) {
-        this.pager = pager
-        redrawChildren(false)
+    override fun onScroll(itemCount: Int, position: Int, positionOffset: Float) {
+        if (itemCount != childCount || isInEditMode) {
+            redrawChildren(itemCount)
+        }
+        redrawProgress(position, positionOffset)
     }
 
     // computation section
@@ -182,13 +146,9 @@ class GoodPagerIndicator @JvmOverloads constructor(
      * @see [ViewPager2.OnPageChangeCallback]
      */
     private fun redrawProgress(
-        position: Int = lastPosition,
-        positionOffset: Float = lastPositionOffset,
-        force: Boolean = false
+        position: Int,
+        positionOffset: Float
     ) {
-        lastPosition = position
-        lastPositionOffset = positionOffset
-        redrawChildren(force)
         for (i in 0 until childCount) {
             val distance =
                 (i - position).absoluteValue + if (i <= position) positionOffset else -positionOffset
@@ -204,23 +164,21 @@ class GoodPagerIndicator @JvmOverloads constructor(
         }
     }
 
-    private fun redrawChildren(force: Boolean) {
-        if (pager?.adapter?.itemCount != childCount || isInEditMode || force) {
-            removeAllViews()
-            for (i in 0 until (pager?.adapter?.itemCount
-                ?: if (isInEditMode) previewItemCount else 0)) {
-                super.addView(Dot(context).apply {
-                    minSize = dotMinSize
-                    maxSize = dotMaxSize
-                    spacing = dotSpacing
-                    sizeFactor = dotSizeFactor
-                    setOnClickListener {
-                        if (clickEnabled) {
-                            pager?.currentItem = i
-                        }
+    private fun redrawChildren(count: Int = childCount) {
+        removeAllViews()
+        for (i in 0 until count) {
+            super.addView(Dot(context).apply {
+                minSize = dotMinSize
+                maxSize = dotMaxSize
+                spacing = dotSpacing
+                sizeFactor = dotSizeFactor
+                setOnClickListener {
+                    if (clickEnabled) {
+//                        TODO: FIXME
+//                        pager?.currentItem = i
                     }
-                }, i, generateDefaultLayoutParams())
-            }
+                }
+            }, i, generateDefaultLayoutParams())
         }
     }
 
@@ -232,50 +190,6 @@ class GoodPagerIndicator @JvmOverloads constructor(
                 spacing = dotSpacing
             }
         }
-    }
-
-    // ViewPager2 listeners section
-    private inner class PageChangeCallback : ViewPager2.OnPageChangeCallback() {
-        override fun onPageScrolled(
-            position: Int,
-            positionOffset: Float,
-            positionOffsetPixels: Int
-        ) = redrawProgress(position, positionOffset)
-    }
-
-    private inner class AdapterDataObserver : RecyclerView.AdapterDataObserver() {
-        override fun onChanged() = redrawChildren(false)
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        this.pager?.registerOnPageChangeCallback(PageChangeCallback().also {
-            pageChangeCallback = it
-        })
-        this.pager?.adapter?.registerAdapterDataObserver(AdapterDataObserver().also {
-            dataObserver = it
-        })
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        pageChangeCallback?.let {
-            this.pager?.unregisterOnPageChangeCallback(it)
-        }
-        dataObserver?.let {
-            this.pager?.adapter?.unregisterAdapterDataObserver(it)
-        }
-    }
-
-    // Gestures section
-    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        if (swipeEnabled) {
-            detector.onTouchEvent(event)
-            if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
-                pager?.endFakeDrag()
-            }
-        }
-        return false
     }
 
 
@@ -343,16 +257,6 @@ class GoodPagerIndicator @JvmOverloads constructor(
             )
         }
     }
-
-    // override unsupported functions
-
-    override fun addView(child: View?) = throw UnsupportedOperationException("addView calls are not supported for indicator")
-    override fun addView(child: View?, params: ViewGroup.LayoutParams?) = throw UnsupportedOperationException("addView calls are not supported for indicator")
-    override fun addView(child: View?, index: Int) = throw UnsupportedOperationException("addView calls are not supported for indicator")
-    override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) = throw UnsupportedOperationException("addView calls are not supported for indicator")
-    override fun addView(child: View?, width: Int, height: Int) = throw UnsupportedOperationException("addView calls are not supported for indicator")
-    override fun addViewInLayout(child: View?, index: Int, params: ViewGroup.LayoutParams?) = throw UnsupportedOperationException("addViewInLayout calls are not supported for indicator")
-    override fun addViewInLayout(child: View?, index: Int, params: ViewGroup.LayoutParams?, preventRequestLayout: Boolean) = throw UnsupportedOperationException("addViewInLayout calls are not supported for indicator")
 
 }
 
