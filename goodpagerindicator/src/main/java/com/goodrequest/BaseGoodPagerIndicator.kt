@@ -4,8 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -18,10 +16,16 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    // Pager related fields
     private var pager: ViewPager2? = null
     private var dataObserver: AdapterDataObserver? = null
     private var pageChangeCallback: PageChangeCallback? = null
 
+    // Position related fields
+    private var lastPosition = previewPosition      // last known "selected item" position
+    private var lastPositionOffset = previewOffset  // last known "selected item" offset position
+
+    // Gesture handling
     private val detector: GestureDetector
     private val gesturesCallback = object : GestureDetector.SimpleOnGestureListener() {
 
@@ -36,27 +40,44 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
 
     }
 
+    // Behavior restrictions
     var swipeEnabled: Boolean = true
     var clickEnabled: Boolean = true
 
-    private var lastPosition = previewPosition      // last known "selected item" position
-    private var lastPositionOffset = previewOffset  // last known "selected item" offset position
-
     init {
         orientation = HORIZONTAL
-
         detector = GestureDetector(context, gesturesCallback)
+
+        context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.GoodPagerIndicator,
+            0, 0
+        ).apply {
+            swipeEnabled = getBoolean(R.styleable.BaseGoodPagerIndicator_indicator_swipe_enabled, true)
+            clickEnabled = getBoolean(R.styleable.BaseGoodPagerIndicator_indicator_click_enabled, true)
+        }
     }
 
     fun initWith(pager: ViewPager2) {
         this.pager = pager
+        redraw()
     }
 
     fun redraw() {
-        onScroll(childCount, lastPosition, lastPositionOffset)
+        removeAllViews()
+        onScroll(pager?.adapter?.itemCount ?: 0, lastPosition, lastPositionOffset)
+    }
+
+    fun handleClick(position: Int) {
+        if (clickEnabled) {
+            pager?.currentItem = position
+        }
     }
 
     abstract fun onScroll(itemCount: Int, position: Int, positionOffset: Float)
+
+    fun getLastPosition() = lastPosition
+    fun getLastPositionOffset() = lastPositionOffset
 
     // ViewPager2 listeners section
     private inner class PageChangeCallback : ViewPager2.OnPageChangeCallback() {
@@ -73,7 +94,6 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
 
     private inner class AdapterDataObserver : RecyclerView.AdapterDataObserver() {
         override fun onChanged() {
-            removeAllViews()
             redraw()
         }
     }
@@ -111,14 +131,4 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
         }
         return false
     }
-
-    // override unsupported functions
-//    override fun addView(child: View?) = throw UnsupportedOperationException("addView calls are not supported for indicator")
-//    override fun addView(child: View?, params: ViewGroup.LayoutParams?) = throw UnsupportedOperationException("addView calls are not supported for indicator")
-//    override fun addView(child: View?, index: Int) = throw UnsupportedOperationException("addView calls are not supported for indicator")
-//    override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) = throw UnsupportedOperationException("addView calls are not supported for indicator")
-//    override fun addView(child: View?, width: Int, height: Int) = throw UnsupportedOperationException("addView calls are not supported for indicator")
-//    override fun addViewInLayout(child: View?, index: Int, params: ViewGroup.LayoutParams?) = throw UnsupportedOperationException("addViewInLayout calls are not supported for indicator")
-//    override fun addViewInLayout(child: View?, index: Int, params: ViewGroup.LayoutParams?, preventRequestLayout: Boolean) = throw UnsupportedOperationException("addViewInLayout calls are not supported for indicator")
-
 }

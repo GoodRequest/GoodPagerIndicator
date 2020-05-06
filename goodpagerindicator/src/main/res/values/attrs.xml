@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <declare-styleable name="BaseGoodPagerIndicator">
+        <attr name="indicator_swipe_enabled" format="boolean"/>
+        <attr name="indicator_click_enabled" format="boolean"/>
+    </declare-styleable>
+
     <declare-styleable name="GoodPagerIndicator">
         <attr name="indicator_dot_min_size" format="dimension"/>
         <attr name="indicator_dot_max_size" format="dimension"/>
@@ -14,8 +20,6 @@
             <enum name="bounce" value="3"/>
             <enum name="overshoot" value="4"/>
         </attr>
-        <attr name="indicator_swipe_enabled" format="boolean"/>
-        <attr name="indicator_click_enabled" format="boolean"/>
         <attr name="indicator_dot_size_factor" format="float"/>
     </declare-styleable>
 </resources>
