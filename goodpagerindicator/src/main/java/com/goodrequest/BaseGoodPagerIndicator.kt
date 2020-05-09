@@ -31,13 +31,13 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
 
         override fun onDown(e: MotionEvent?) = true
 
-        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float) =
-            pager?.let {
+        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float) : Boolean {
+            return pager?.let {
                 it.beginFakeDrag()
-                it.fakeDragBy(1f) // TODO: fix-me
+                computeSwipe(it, distanceX, distanceY)
                 true
             } ?: false
-
+        }
     }
 
     // Behavior restrictions
@@ -78,6 +78,22 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
 
     fun getLastPosition() = lastPosition
     fun getLastPositionOffset() = lastPositionOffset
+
+    /**
+     * Here you can handle swipe gestures over whole pager indicator. Just call
+     * [ViewPager2.fakeDragBy] method with computed scroll distance. You will most
+     * probably need to operate with [ViewPager2.getWidth] and the pager indicator
+     * children widths / counts
+     */
+    open fun computeSwipe(
+        pager: ViewPager2,
+        distanceX: Float,
+        distanceY: Float
+    ) {
+        val childrenWidth = (getChildAt(childCount - 1).right - getChildAt(0).left)
+        val pagerWidth = pager.width
+        pager.fakeDragBy(distanceX * pagerWidth / (childrenWidth / childCount))
+    }
 
     // ViewPager2 listeners section
     private inner class PageChangeCallback : ViewPager2.OnPageChangeCallback() {
