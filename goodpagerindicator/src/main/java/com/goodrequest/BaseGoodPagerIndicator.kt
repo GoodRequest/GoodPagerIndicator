@@ -12,6 +12,7 @@ private const val previewPosition = 3
 private const val previewOffset = 0f
 private const val previewItemCount = 6
 
+@Suppress("LeakingThis")
 abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
@@ -56,6 +57,7 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
             swipeEnabled = getBoolean(R.styleable.BaseGoodPagerIndicator_indicator_swipe_enabled, true)
             clickEnabled = getBoolean(R.styleable.BaseGoodPagerIndicator_indicator_click_enabled, true)
         }
+        redraw()
     }
 
     fun initWith(pager: ViewPager2) {
@@ -65,7 +67,11 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
 
     fun redraw() {
         removeAllViews()
-        onScroll(pager?.adapter?.itemCount ?: 0, lastPosition, lastPositionOffset)
+        if (isInEditMode) {
+            onScroll(previewItemCount, previewPosition, previewOffset)
+        } else {
+            onScroll(pager?.adapter?.itemCount ?: 0, lastPosition, lastPositionOffset)
+        }
     }
 
     fun handleClick(position: Int) {
@@ -122,9 +128,6 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
         this.pager?.adapter?.registerAdapterDataObserver(AdapterDataObserver().also {
             dataObserver = it
         })
-        if (isInEditMode) {
-            onScroll(previewItemCount, previewPosition, previewOffset)
-        }
     }
 
     override fun onDetachedFromWindow() {
