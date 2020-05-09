@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.TypedValue
 import androidx.annotation.AttrRes
+import com.goodrequest.base.SameChildCountPagerIndicator
 
 private const val defaultActiveColorAttrRes = android.R.attr.colorAccent
 private const val defaultInactiveColorAttrRes = android.R.attr.colorPrimary

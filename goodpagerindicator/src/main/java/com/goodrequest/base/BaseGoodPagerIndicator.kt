@@ -1,4 +1,4 @@
-package com.goodrequest
+package com.goodrequest.base
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.goodrequest.R
 
 private const val previewPosition = 3
 private const val previewOffset = 0f
@@ -23,8 +24,10 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
     private var pageChangeCallback: PageChangeCallback? = null
 
     // Position related fields
-    private var lastPosition = previewPosition      // last known "selected item" position
-    private var lastPositionOffset = previewOffset  // last known "selected item" offset position
+    private var lastPosition =
+        previewPosition      // last known "selected item" position
+    private var lastPositionOffset =
+        previewOffset  // last known "selected item" offset position
 
     // Gesture handling
     private val detector: GestureDetector
@@ -68,7 +71,11 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
     fun redraw() {
         removeAllViews()
         if (isInEditMode) {
-            onScroll(previewItemCount, previewPosition, previewOffset)
+            onScroll(
+                previewItemCount,
+                previewPosition,
+                previewOffset
+            )
         } else {
             onScroll(pager?.adapter?.itemCount ?: 0, lastPosition, lastPositionOffset)
         }

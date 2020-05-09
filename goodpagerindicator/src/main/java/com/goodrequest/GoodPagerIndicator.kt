@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.animation.*
 import androidx.annotation.AttrRes
+import com.goodrequest.base.SameChildCountPagerIndicator
 import kotlin.math.max
 
 private const val linearInterpolator = 0

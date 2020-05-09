@@ -1,4 +1,4 @@
-package com.goodrequest
+package com.goodrequest.base
 
 import android.content.Context
 import android.graphics.Canvas
