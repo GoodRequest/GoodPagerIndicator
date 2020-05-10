@@ -20,15 +20,14 @@ class PiePagerIndicator @JvmOverloads constructor(
     override fun onMeasureDot(widthMeasureSpec: Int, heightMeasureSpec: Int) =
         MeasureSpec.makeMeasureSpec(30, MeasureSpec.EXACTLY) to MeasureSpec.makeMeasureSpec(30, MeasureSpec.EXACTLY)
 
-    override fun onDrawDot(canvas: Canvas, position: Float, itemCount: Int) {
-        val percent = position / (itemCount - 1)
+    override fun onDrawDot(canvas: Canvas, position: Int) {
         canvas.drawArc(
             0F,
             0F,
             30F,
             30F,
             0F,
-            360 * percent,
+            360 * progress,
             true,
             paint
         )

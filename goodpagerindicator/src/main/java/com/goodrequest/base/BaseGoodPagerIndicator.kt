@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.goodrequest.R
+import kotlin.math.abs
 
 private const val previewPosition = 3
 private const val previewOffset = 0f
@@ -24,10 +25,8 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
     private var pageChangeCallback: PageChangeCallback? = null
 
     // Position related fields
-    private var lastPosition =
-        previewPosition      // last known "selected item" position
-    private var lastPositionOffset =
-        previewOffset  // last known "selected item" offset position
+    private var lastKnownPosition = previewPosition // last known "selected item" position
+    private var lastKnownOffset = previewOffset     // last known "selected item" offset position
 
     // Gesture handling
     private val detector: GestureDetector
@@ -77,7 +76,7 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
                 previewOffset
             )
         } else {
-            onScroll(pager?.adapter?.itemCount ?: 0, lastPosition, lastPositionOffset)
+            onScroll(itemCount, lastKnownPosition, lastKnownOffset)
         }
     }
 
@@ -89,8 +88,48 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
 
     abstract fun onScroll(itemCount: Int, position: Int, positionOffset: Float)
 
-    fun getLastPosition() = lastPosition
-    fun getLastPositionOffset() = lastPositionOffset
+    /**
+     *
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun getRelativeDistance(position: Int) = abs(absolutePosition - position)
+
+    /**
+     * Currently active item position. This position is equivalent of `position` obtained from
+     * [PageChangeCallback.onPageScrolled], so if scroll is anywhere between 2 pages, the
+     * `position` will always point on first page (if total scroll is 1.9, the `position` will
+     * still be 1)
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    val position get() = lastKnownPosition
+
+    /**
+     * Current offset between 2 pages as a percentage. In between progress.
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    val positionOffset get() =  lastKnownOffset
+
+    /**
+     * Absolute position of pager indicator. If indicator is idle, the value will be whole number
+     * matching page number - 1. If indicator is between f.e. 3rd and 4th position, its value
+     * will be somewhere in interval (2, 3)
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    val absolutePosition get() = lastKnownOffset + lastKnownPosition
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    val itemCount get() = pager?.adapter?.itemCount ?: 0
+
+    /**
+     * Completion progress of pager indicator. If you are scrolled on last item, the value
+     * will be 1.0, if you are scrolled on first item, value will be 0.0.
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    val progress get() = when (itemCount) {
+        0 -> 0F
+        1 -> 1F
+        else -> (lastKnownOffset + lastKnownPosition) / (itemCount - 1)
+    }
 
     /**
      * Here you can handle swipe gestures over whole pager indicator. Just call
@@ -115,9 +154,9 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
             positionOffset: Float,
             positionOffsetPixels: Int
         ) {
-            lastPosition = position
-            lastPositionOffset = positionOffset
-            onScroll(pager?.adapter?.itemCount ?: 0, position, positionOffset)
+            lastKnownPosition = position
+            lastKnownOffset = positionOffset
+            onScroll(itemCount, position, positionOffset)
         }
     }
 

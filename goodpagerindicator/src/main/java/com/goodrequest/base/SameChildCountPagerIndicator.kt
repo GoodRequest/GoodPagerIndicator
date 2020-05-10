@@ -12,11 +12,7 @@ abstract class SameChildCountPagerIndicator @JvmOverloads constructor(
 
     abstract fun onMeasureDot(widthMeasureSpec: Int, heightMeasureSpec: Int): Pair<Int, Int>
 
-    /**
-     * [distanceFactor] respresents how far away is current page focus. 0 means the dot
-     * is fully focused on. 10 means, focus is on 10.th dot from this one
-     */
-    abstract fun onDrawDot(canvas: Canvas, distanceFactor: Float)
+    abstract fun onDrawDot(canvas: Canvas, position: Int)
 
     private fun getDotAt(position: Int) = getChildAt(position) as Dot
 
@@ -25,7 +21,7 @@ abstract class SameChildCountPagerIndicator @JvmOverloads constructor(
             removeAllViews()
             for (i in 0 until itemCount) {
                 addView(Dot(context).apply {
-                    drawing = { canvas, distanceFactor -> onDrawDot(canvas, distanceFactor) }
+                    drawing = { canvas -> onDrawDot(canvas, i) }
                     measuring = { w, h -> onMeasureDot(w, h) }
                     setOnClickListener { handleClick(i) }
                 })
@@ -33,10 +29,7 @@ abstract class SameChildCountPagerIndicator @JvmOverloads constructor(
         }
 
         for (i in 0 until itemCount) {
-            getDotAt(i).apply {
-                distanceFactor = abs(positionOffset + position - i)
-                invalidate()
-            }
+            getDotAt(i).invalidate()
         }
     }
 
@@ -44,9 +37,8 @@ abstract class SameChildCountPagerIndicator @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     ) : View(context, attrs, defStyleAttr) {
 
-        var drawing: (Canvas, Float) -> Unit = { _, _ ->  }
+        var drawing: (Canvas) -> Unit = { }
         var measuring: (widthMeasureSpec: Int, heightMeasureSpec: Int) -> Pair<Int, Int> = { w, h -> w to h }
-        var distanceFactor: Float = 0F
 
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
             val (widthSpec, heightSpec) = measuring(widthMeasureSpec, heightMeasureSpec)
@@ -55,7 +47,7 @@ abstract class SameChildCountPagerIndicator @JvmOverloads constructor(
 
         override fun onDraw(canvas: Canvas) {
             super.onDraw(canvas)
-            drawing(canvas, distanceFactor)
+            drawing(canvas)
         }
     }
 }

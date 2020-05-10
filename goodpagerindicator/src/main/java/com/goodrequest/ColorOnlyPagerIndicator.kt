@@ -55,10 +55,12 @@ class ColorOnlyPagerIndicator @JvmOverloads constructor(
     override fun onMeasureDot(widthMeasureSpec: Int, heightMeasureSpec: Int) =
         MeasureSpec.makeMeasureSpec(dotSize, MeasureSpec.EXACTLY) to MeasureSpec.makeMeasureSpec(dotSize, MeasureSpec.EXACTLY)
 
-    override fun onDrawDot(canvas: Canvas, distanceFactor: Float) {
+    override fun onDrawDot(canvas: Canvas, position: Int) {
+        val distance = getRelativeDistance(position)
+
         // dot color
-        dotPaint.color = if (distanceFactor < 1) colorEvaluator.evaluate(
-            distanceFactor,
+        dotPaint.color = if (distance < 1) colorEvaluator.evaluate(
+            distance,
             activeColor,
             inactiveColor
         ) as Int else inactiveColor
