@@ -69,15 +69,7 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
 
     fun redraw() {
         removeAllViews()
-        if (isInEditMode) {
-            onScroll(
-                previewItemCount,
-                previewPosition,
-                previewOffset
-            )
-        } else {
-            onScroll(itemCount, lastKnownPosition, lastKnownOffset)
-        }
+        onScroll()
     }
 
     fun handleClick(position: Int) {
@@ -86,7 +78,17 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
         }
     }
 
-    abstract fun onScroll(itemCount: Int, position: Int, positionOffset: Float)
+    /**
+     * Scroll event occurs. All necessary values can be found using these getters:
+     *
+     * - [getRelativeDistance]
+     * - [position]
+     * - [positionOffset]
+     * - [absolutePosition]
+     * - [itemCount]
+     * - [progress]
+     */
+    abstract fun onScroll()
 
     /**
      *
@@ -107,7 +109,7 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
      * Current offset between 2 pages as a percentage. In between progress.
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    val positionOffset get() =  lastKnownOffset
+    val positionOffset get() = lastKnownOffset
 
     /**
      * Absolute position of pager indicator. If indicator is idle, the value will be whole number
@@ -118,7 +120,7 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
     val absolutePosition get() = lastKnownOffset + lastKnownPosition
 
     @Suppress("MemberVisibilityCanBePrivate")
-    val itemCount get() = pager?.adapter?.itemCount ?: 0
+    val itemCount get() = if (isInEditMode) previewItemCount else pager?.adapter?.itemCount ?: 0
 
     /**
      * Completion progress of pager indicator. If you are scrolled on last item, the value
@@ -156,7 +158,7 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
         ) {
             lastKnownPosition = position
             lastKnownOffset = positionOffset
-            onScroll(itemCount, position, positionOffset)
+            onScroll()
         }
     }
 

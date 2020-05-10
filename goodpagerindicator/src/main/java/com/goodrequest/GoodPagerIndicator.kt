@@ -122,7 +122,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
         return w to h
     }
 
-    override fun onDrawDot(canvas: Canvas, position: Int) {
+    override fun onDrawDot(canvas: Canvas, position: Int, width: Int, height: Int) {
         val dist = getRelativeDistance(position)
 
         // dot color
@@ -131,9 +131,10 @@ class GoodPagerIndicator @JvmOverloads constructor(
         // dot size
         val progress = 1F - dist / resizingSpan
         val interpolatedProgress = interpolator.getInterpolation(progress)
+
         canvas.drawCircle(
-            canvas.width.toFloat() / 2,
-            canvas.height.toFloat() / 2,
+            width.toFloat() / 2,
+            height.toFloat() / 2,
             ((dotMaxSize - dotMinSize) * interpolatedProgress + dotMinSize) / 2,
             dotPaint
         )

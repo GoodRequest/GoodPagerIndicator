@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
-import kotlin.math.abs
 
 abstract class SameChildCountPagerIndicator @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -12,16 +11,16 @@ abstract class SameChildCountPagerIndicator @JvmOverloads constructor(
 
     abstract fun onMeasureDot(widthMeasureSpec: Int, heightMeasureSpec: Int): Pair<Int, Int>
 
-    abstract fun onDrawDot(canvas: Canvas, position: Int)
+    abstract fun onDrawDot(canvas: Canvas, position: Int, width: Int, height: Int)
 
     private fun getDotAt(position: Int) = getChildAt(position) as Dot
 
-    override fun onScroll(itemCount: Int, position: Int, positionOffset: Float) {
+    override fun onScroll() {
         if (itemCount != childCount) {
             removeAllViews()
             for (i in 0 until itemCount) {
                 addView(Dot(context).apply {
-                    drawing = { canvas -> onDrawDot(canvas, i) }
+                    drawing = { canvas, width, height -> onDrawDot(canvas, i, width, height) }
                     measuring = { w, h -> onMeasureDot(w, h) }
                     setOnClickListener { handleClick(i) }
                 })
@@ -37,7 +36,7 @@ abstract class SameChildCountPagerIndicator @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     ) : View(context, attrs, defStyleAttr) {
 
-        var drawing: (Canvas) -> Unit = { }
+        var drawing: (Canvas, Int, Int) -> Unit = { _, _, _ -> }
         var measuring: (widthMeasureSpec: Int, heightMeasureSpec: Int) -> Pair<Int, Int> = { w, h -> w to h }
 
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -47,7 +46,7 @@ abstract class SameChildCountPagerIndicator @JvmOverloads constructor(
 
         override fun onDraw(canvas: Canvas) {
             super.onDraw(canvas)
-            drawing(canvas)
+            drawing(canvas, width, height)
         }
     }
 }

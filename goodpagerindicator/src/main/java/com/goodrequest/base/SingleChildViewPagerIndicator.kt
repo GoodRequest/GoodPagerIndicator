@@ -16,7 +16,7 @@ abstract class SingleChildViewPagerIndicator<T: View> @JvmOverloads constructor(
      */
     open fun editOnScroll(view: T) {}
 
-    override fun onScroll(itemCount: Int, position: Int, positionOffset: Float) {
+    override fun onScroll() {
         @Suppress("UNCHECKED_CAST")
         val child = getChildAt(0) as T? ?: createView(context).apply { addView(this) }
         editOnScroll(child)

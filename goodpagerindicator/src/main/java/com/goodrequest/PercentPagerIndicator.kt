@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.widget.TextView
 import com.goodrequest.base.SingleChildViewPagerIndicator
 
+@Suppress("unused")
 class PercentPagerIndicator @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : SingleChildViewPagerIndicator<TextView>(context, attrs, defStyleAttr) {
