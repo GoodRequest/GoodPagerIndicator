@@ -19,6 +19,12 @@
         <attr name="indicator_dot_padding" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="PiePagerIndicator">
+        <attr name="indicator_pie_color" format="color"/>
+        <attr name="indicator_pie_size" format="dimension"/>
+        <attr name="indicator_pie_start_angle" format="integer"/>
+    </declare-styleable>
+
     <declare-styleable name="GoodPagerIndicator">
         <attr name="indicator_dot_min_size" format="dimension"/>
         <attr name="indicator_dot_max_size" format="dimension"/>
