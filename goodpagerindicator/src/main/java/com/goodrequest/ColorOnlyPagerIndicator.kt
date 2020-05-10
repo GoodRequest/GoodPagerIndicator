@@ -15,10 +15,6 @@ private const val defaultInactiveColorAttrRes = android.R.attr.colorPrimary
 private const val defaultDotSizeDp = 12
 private const val defaultDotPaddingDp = 2
 
-private const val previewPosition = 3
-private const val previewOffset = 0f
-private const val previewItemCount = 6
-
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class ColorOnlyPagerIndicator @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -46,9 +42,6 @@ class ColorOnlyPagerIndicator @JvmOverloads constructor(
             } finally {
                 recycle()
             }
-        }
-        if (isInEditMode) {
-            onScroll(previewItemCount, previewPosition, previewOffset)
         }
     }
 
