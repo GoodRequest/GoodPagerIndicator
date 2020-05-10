@@ -7,21 +7,15 @@ import android.view.View
 
 abstract class SingleChildPagerIndicator @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : BaseGoodPagerIndicator(context, attrs, defStyleAttr) {
+) : SingleChildViewPagerIndicator<View>(context, attrs, defStyleAttr) {
 
     abstract fun onMeasureDot(widthMeasureSpec: Int, heightMeasureSpec: Int): Pair<Int, Int>
 
     abstract fun onDrawDot(canvas: Canvas, position: Int)
 
-    override fun onScroll(itemCount: Int, position: Int, positionOffset: Float) {
-        if (childCount != 1) {
-            addView(Dot(context).apply {
-                drawing = { canvas, position -> onDrawDot(canvas, position) }
-                measuring = { w, h -> onMeasureDot(w, h) }
-            })
-        }
-
-        (getChildAt(0) as Dot).invalidate()
+    override fun createView(context: Context): View = Dot(context).apply {
+        drawing = { canvas, position -> onDrawDot(canvas, position) }
+        measuring = { w, h -> onMeasureDot(w, h) }
     }
 
     private inner class Dot @JvmOverloads constructor(
