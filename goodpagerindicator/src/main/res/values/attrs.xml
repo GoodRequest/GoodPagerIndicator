@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <attr name="indicator_dot_active_color" format="color" />
+    <attr name="indicator_dot_inactive_color" format="color" />
+
+    <declare-styleable name="BaseGoodPagerIndicator">
+        <attr name="indicator_swipe_enabled" format="boolean"/>
+        <attr name="indicator_click_enabled" format="boolean"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="ColorOnlyPagerIndicator">
+        <attr name="indicator_dot_active_color"/>
+        <attr name="indicator_dot_inactive_color"/>
+        <attr name="indicator_dot_size" format="dimension"/>
+        <attr name="indicator_dot_padding" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="PiePagerIndicator">
+        <attr name="indicator_pie_color" format="color"/>
+        <attr name="indicator_pie_size" format="dimension"/>
+        <attr name="indicator_pie_start_angle" format="integer"/>
+    </declare-styleable>
+
     <declare-styleable name="GoodPagerIndicator">
         <attr name="indicator_dot_min_size" format="dimension"/>
         <attr name="indicator_dot_max_size" format="dimension"/>
         <attr name="indicator_dot_spacing" format="dimension"/>
         <attr name="indicator_resizing_span" format="integer"/>
-        <attr name="indicator_dot_active_color" format="color"/>
-        <attr name="indicator_dot_inactive_color" format="color"/>
+        <attr name="indicator_dot_active_color"/>
+        <attr name="indicator_dot_inactive_color"/>
         <attr name="indicator_interpolator" format="enum">
             <enum name="linear" value="0"/>
             <enum name="accelerate" value="1"/>
@@ -14,8 +37,6 @@
             <enum name="bounce" value="3"/>
             <enum name="overshoot" value="4"/>
         </attr>
-        <attr name="indicator_swipe_enabled" format="boolean"/>
-        <attr name="indicator_click_enabled" format="boolean"/>
         <attr name="indicator_dot_size_factor" format="float"/>
     </declare-styleable>
 </resources>
