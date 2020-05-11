@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="GlobalGoodIndicatorAttrs">
-        <attr name="indicator_dot_active_color" format="color"/>
-        <attr name="indicator_dot_inactive_color" format="color"/>
-    </declare-styleable>
+    <attr name="indicator_dot_active_color" format="color" />
+    <attr name="indicator_dot_inactive_color" format="color" />
 
     <declare-styleable name="BaseGoodPagerIndicator">
         <attr name="indicator_swipe_enabled" format="boolean"/>
