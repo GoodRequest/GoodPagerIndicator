@@ -24,6 +24,8 @@
         app:indicator_dot_max_size="10dp"
         app:indicator_dot_min_size="0dp"
         app:indicator_dot_size_factor="1.3"
+        app:indicator_ignore_first_count="2"
+        app:indicator_ignore_last_count="2"
         app:indicator_dot_spacing="2dp"
         app:indicator_interpolator="linear"
         app:indicator_resizing_span="3"

@@ -39,5 +39,8 @@
         </attr>
         <attr name="indicator_dot_size_factor" format="float"/>
         <attr name="indicator_dot_blur_radius" format="dimension"/>
+        <attr name="indicator_ignore_first_count" format="integer"/>
+        <attr name="indicator_ignore_last_count" format="integer"/>
+        <attr name="indicator_ignore_hides" format="boolean"/>
     </declare-styleable>
 </resources>

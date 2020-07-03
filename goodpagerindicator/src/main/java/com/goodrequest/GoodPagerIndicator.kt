@@ -8,6 +8,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.View
 import android.view.animation.*
 import androidx.annotation.AttrRes
 import com.goodrequest.base.SameChildCountPagerIndicator
@@ -90,6 +91,37 @@ class GoodPagerIndicator @JvmOverloads constructor(
             redraw()
         }
 
+    /**
+     * How many items from start won't be displayed
+     */
+    var ignoreFirstCount: Int = 0
+        set(value) {
+            field = value
+            redraw()
+        }
+
+    /**
+     * How many items from end won't be displayed
+     */
+    var ignoreLastCount: Int = 0
+        set(value) {
+            field = value
+            redraw()
+        }
+
+    /**
+     * If you currently visible page is in ignore bounds and this flag is set to true
+     * not a single dot will be displayed on screen
+     *
+     * @see ignoreFirstCount
+     * @see ignoreLastCount
+     */
+    var ignoreHides: Boolean = true
+        set(value) {
+            field = value
+            redraw()
+        }
+
     init {
         context.theme.obtainStyledAttributes(
             attrs,
@@ -101,6 +133,9 @@ class GoodPagerIndicator @JvmOverloads constructor(
                 dotMaxSize = getDimensionPixelSize(R.styleable.GoodPagerIndicator_indicator_dot_max_size, (defaultMaxDotSizeDp * context.resources.displayMetrics.density).toInt())
                 dotSpacing = getDimensionPixelSize(R.styleable.GoodPagerIndicator_indicator_dot_spacing, (defaultDotSpacingDp * context.resources.displayMetrics.density).toInt())
                 resizingSpan = getInt(R.styleable.GoodPagerIndicator_indicator_resizing_span, defaultSpanSize)
+                ignoreFirstCount = getInt(R.styleable.GoodPagerIndicator_indicator_ignore_first_count, 0)
+                ignoreLastCount = getInt(R.styleable.GoodPagerIndicator_indicator_ignore_first_count, 0)
+                ignoreHides = getBoolean(R.styleable.GoodPagerIndicator_indicator_ignore_hides, true)
                 activeColor = getColor(R.styleable.GoodPagerIndicator_indicator_dot_active_color, context.fetchColor(defaultActiveColorAttrRes))
                 inactiveColor = getColor(R.styleable.GoodPagerIndicator_indicator_dot_inactive_color, context.fetchColor(defaultInactiveColorAttrRes))
                 interpolator = when (getInt(R.styleable.GoodPagerIndicator_indicator_interpolator, defaultInterpolator)) {
@@ -120,6 +155,16 @@ class GoodPagerIndicator @JvmOverloads constructor(
         }
     }
 
+    override fun onScroll() {
+        super.onScroll()
+        for (i in 0 until ignoreFirstCount) {
+            getChildAt(i)?.visibility = View.GONE
+        }
+        for (i in itemCount - ignoreLastCount..itemCount) {
+            getChildAt(i)?.visibility = View.GONE
+        }
+    }
+
     override fun onMeasureDot(widthMeasureSpec: Int, heightMeasureSpec: Int): Pair<Int, Int> {
         val w = MeasureSpec.makeMeasureSpec((max(dotMinSize, dotMaxSize) * dotSizeFactor).toInt() + dotSpacing, MeasureSpec.EXACTLY)
         val h = MeasureSpec.makeMeasureSpec((max(dotMinSize, dotMaxSize) * dotSizeFactor).toInt(), MeasureSpec.EXACTLY)
@@ -127,6 +172,7 @@ class GoodPagerIndicator @JvmOverloads constructor(
     }
 
     override fun onDrawDot(canvas: Canvas, position: Int, width: Int, height: Int) {
+        if (ignoreHides && (absolutePosition < ignoreFirstCount || absolutePosition > itemCount - ignoreLastCount - 1)) return
         val dist = getRelativeDistance(position)
 
         // dot color
