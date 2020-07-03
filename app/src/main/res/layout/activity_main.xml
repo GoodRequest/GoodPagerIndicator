@@ -28,6 +28,7 @@
         app:indicator_interpolator="linear"
         app:indicator_resizing_span="3"
         app:indicator_swipe_enabled="true"
+        app:indicator_dot_blur_radius="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pager" />

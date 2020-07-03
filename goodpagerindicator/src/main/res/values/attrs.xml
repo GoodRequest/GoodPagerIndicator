@@ -38,5 +38,6 @@
             <enum name="overshoot" value="4"/>
         </attr>
         <attr name="indicator_dot_size_factor" format="float"/>
+        <attr name="indicator_dot_blur_radius" format="dimension"/>
     </declare-styleable>
 </resources>

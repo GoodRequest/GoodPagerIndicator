@@ -3,6 +3,7 @@ package com.goodrequest
 import android.animation.ArgbEvaluator
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
@@ -37,7 +38,8 @@ class GoodPagerIndicator @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : SameChildCountPagerIndicator(context, attrs, defStyleAttr) {
 
-    private val dotPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val dotPaint = Paint(Paint.ANTI_ALIAS_FLAG.or(Paint.DITHER_FLAG)).apply {
+    }
     private val colorEvaluator = ArgbEvaluator()
 
     var dotMinSize: Int = 0
@@ -110,6 +112,8 @@ class GoodPagerIndicator @JvmOverloads constructor(
                     else -> throw IllegalArgumentException("Select proper value from enum")
                 }
                 dotSizeFactor = getFloat(R.styleable.GoodPagerIndicator_indicator_dot_size_factor, 1.0f)
+                val blurRadius = getDimensionPixelSize(R.styleable.GoodPagerIndicator_indicator_dot_blur_radius, 0)
+                dotPaint.maskFilter = BlurMaskFilter(blurRadius.toFloat(), BlurMaskFilter.Blur.INNER)
             } finally {
                 recycle()
             }
