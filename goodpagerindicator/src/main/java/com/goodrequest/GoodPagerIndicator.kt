@@ -147,8 +147,8 @@ class GoodPagerIndicator @JvmOverloads constructor(
                     else -> throw IllegalArgumentException("Select proper value from enum")
                 }
                 dotSizeFactor = getFloat(R.styleable.GoodPagerIndicator_indicator_dot_size_factor, 1.0f)
-                val blurRadius = getDimensionPixelSize(R.styleable.GoodPagerIndicator_indicator_dot_blur_radius, 0)
-                dotPaint.maskFilter = BlurMaskFilter(blurRadius.toFloat(), BlurMaskFilter.Blur.INNER)
+                val blurRadius = getDimension(R.styleable.GoodPagerIndicator_indicator_dot_blur_radius, 0f)
+                if (blurRadius > 0f) dotPaint.maskFilter = BlurMaskFilter(blurRadius, BlurMaskFilter.Blur.INNER)
             } finally {
                 recycle()
             }
