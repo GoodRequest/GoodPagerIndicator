@@ -13,6 +13,7 @@ import android.view.animation.*
 import androidx.annotation.AttrRes
 import com.goodrequest.base.SameChildCountPagerIndicator
 import kotlin.math.max
+import kotlin.math.min
 
 private const val linearInterpolator = 0
 private const val accelerateInterpolator = 1
@@ -179,13 +180,16 @@ class GoodPagerIndicator @JvmOverloads constructor(
         dotPaint.color = if (dist < 1) colorEvaluator.evaluate(dist, activeColor, inactiveColor) as Int else inactiveColor
 
         // dot size
-        val progress = 1F - dist / resizingSpan
-        val interpolatedProgress = interpolator.getInterpolation(progress)
+        val minSize = min(dotMinSize, dotMaxSize).toFloat()
+        val maxSize = max(dotMinSize, dotMaxSize).toFloat()
+
+        val spanProgress = 1 - dist / resizingSpan
+        val radius = if (dist > resizingSpan) minSize / 2 else ((maxSize - minSize) * spanProgress + minSize) / 2
 
         canvas.drawCircle(
             width.toFloat() / 2,
             height.toFloat() / 2,
-            ((dotMaxSize - dotMinSize) * interpolatedProgress + dotMinSize) / 2,
+            radius,
             dotPaint
         )
     }
