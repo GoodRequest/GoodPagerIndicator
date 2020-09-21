@@ -1,11 +1,13 @@
 package com.goodrequest.base
 
 import android.content.Context
+import android.database.DataSetObserver
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.goodrequest.R
 import kotlin.math.abs
@@ -20,7 +22,7 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     // Pager related fields
-    private var pager: ViewPager2? = null
+    private var pager: Pager? = null
     private var dataObserver: AdapterDataObserver? = null
     private var pageChangeCallback: PageChangeCallback? = null
 
@@ -34,7 +36,7 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
 
         override fun onDown(e: MotionEvent?) = true
 
-        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float) : Boolean {
+        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             return pager?.let {
                 it.beginFakeDrag()
                 computeSwipe(it, distanceX, distanceY)
@@ -62,8 +64,13 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
         redraw()
     }
 
+    fun initWith(pager: ViewPager) {
+        this.pager = PagerAdapter(pager)
+        redraw()
+    }
+
     fun initWith(pager: ViewPager2) {
-        this.pager = pager
+        this.pager = Pager2Adapter(pager)
         redraw()
     }
 
@@ -74,7 +81,7 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
 
     fun handleClick(position: Int) {
         if (clickEnabled) {
-            pager?.currentItem = position
+            pager?.currentItem(position)
         }
     }
 
@@ -120,7 +127,7 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
     val absolutePosition get() = lastKnownOffset + lastKnownPosition
 
     @Suppress("MemberVisibilityCanBePrivate")
-    val itemCount get() = if (isInEditMode) previewItemCount else pager?.adapter?.itemCount ?: 0
+    val itemCount get() = if (isInEditMode) previewItemCount else pager?.itemCount() ?: 0
 
     /**
      * Completion progress of pager indicator. If you are scrolled on last item, the value
@@ -140,17 +147,16 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
      * children widths / counts
      */
     open fun computeSwipe(
-        pager: ViewPager2,
+        pager: Pager,
         distanceX: Float,
         distanceY: Float
     ) {
         val childrenWidth = (getChildAt(childCount - 1).right - getChildAt(0).left)
-        val pagerWidth = pager.width
+        val pagerWidth = pager.width()
         pager.fakeDragBy(distanceX * pagerWidth / (childrenWidth / childCount))
     }
 
-    // ViewPager2 listeners section
-    private inner class PageChangeCallback : ViewPager2.OnPageChangeCallback() {
+    inner class PageChangeCallback : ViewPager2.OnPageChangeCallback(), ViewPager.OnPageChangeListener {
         override fun onPageScrolled(
             position: Int,
             positionOffset: Float,
@@ -170,21 +176,19 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        this.pager?.registerOnPageChangeCallback(PageChangeCallback().also {
+        this.pager?.registerPageChangeCallback(PageChangeCallback().also {
             pageChangeCallback = it
         })
-        this.pager?.adapter?.registerAdapterDataObserver(AdapterDataObserver().also {
-            dataObserver = it
-        })
+        this.pager?.registerAdapterDataObserver()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         pageChangeCallback?.let {
-            this.pager?.unregisterOnPageChangeCallback(it)
+            this.pager?.unregisterPageChangeCallback(it)
         }
         dataObserver?.let {
-            this.pager?.adapter?.unregisterAdapterDataObserver(it)
+            this.pager?.unregisterAdapterDataObserver()
         }
     }
 
@@ -198,4 +202,135 @@ abstract class BaseGoodPagerIndicator @JvmOverloads constructor(
         }
         return false
     }
+
+    inner class ViewPagerDataObserver : DataObserver, DataSetObserver() {
+        override fun onChanged() = redraw()
+    }
+
+    inner class PagerAdapter(private val viewPager: ViewPager) :
+        Pager {
+
+        private val dataObserver = ViewPagerDataObserver()
+        private var registered = false
+        private var fakeDragging = false
+
+        override fun beginFakeDrag() {
+            fakeDragging = true
+            viewPager.beginFakeDrag()
+        }
+
+        override fun endFakeDrag() {
+            if (!fakeDragging) return
+            viewPager.endFakeDrag()
+            fakeDragging = false
+        }
+
+        override fun fakeDragBy(offsetPxFloat: Float) {
+            viewPager.fakeDragBy(offsetPxFloat)
+        }
+
+        override fun width(): Int {
+            return viewPager.width
+        }
+
+        override fun itemCount(): Int {
+            return viewPager.adapter?.count ?: 0
+        }
+
+        override fun currentItem(item: Int) {
+            viewPager.currentItem = item
+        }
+
+        override fun registerPageChangeCallback(pageChangeCallback: PageChangeCallback) {
+            viewPager.addOnPageChangeListener(pageChangeCallback)
+        }
+
+        override fun unregisterPageChangeCallback(pageChangeCallback: PageChangeCallback) {
+            viewPager.removeOnPageChangeListener(pageChangeCallback)
+        }
+
+        override fun registerAdapterDataObserver() {
+            if (registered) return
+            viewPager.adapter?.let {
+                it.registerDataSetObserver(dataObserver)
+                registered = true
+            }
+        }
+
+        override fun unregisterAdapterDataObserver() {
+            if (!registered) return
+            viewPager.adapter?.let {
+                it.unregisterDataSetObserver(dataObserver)
+                registered = false
+            }
+        }
+    }
+
+    inner class Pager2Adapter(private val viewPager: ViewPager2) :
+        Pager {
+
+        private val dataObserver = ViewPager2DataObserver()
+        private var registered = false
+        private var fakeDragging = false
+
+        override fun beginFakeDrag() {
+            fakeDragging = true
+            viewPager.beginFakeDrag()
+        }
+
+        override fun endFakeDrag() {
+            if (!fakeDragging) return
+            viewPager.endFakeDrag()
+            fakeDragging = false
+        }
+
+        override fun fakeDragBy(offsetPxFloat: Float) {
+            viewPager.fakeDragBy(offsetPxFloat)
+        }
+
+        override fun width(): Int {
+            return viewPager.width
+        }
+
+        override fun itemCount(): Int {
+            return viewPager.adapter?.itemCount ?: 0
+        }
+
+        override fun currentItem(item: Int) {
+            viewPager.currentItem = item
+        }
+
+        override fun registerPageChangeCallback(pageChangeCallback: PageChangeCallback) {
+            viewPager.registerOnPageChangeCallback(pageChangeCallback)
+        }
+
+        override fun unregisterPageChangeCallback(pageChangeCallback: PageChangeCallback) {
+            viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
+        }
+
+        override fun registerAdapterDataObserver() {
+            if (registered) return
+            viewPager.adapter?.let {
+                it.registerAdapterDataObserver(dataObserver)
+                registered = true
+            }
+        }
+
+        override fun unregisterAdapterDataObserver() {
+            if (!registered) return
+            viewPager.adapter?.let {
+                it.unregisterAdapterDataObserver(dataObserver)
+                registered = false
+            }
+        }
+    }
+
+    inner class ViewPager2DataObserver : DataObserver, RecyclerView.AdapterDataObserver() {
+        override fun onChanged() = redraw()
+    }
+
+    interface DataObserver {
+        fun onChanged()
+    }
+
 }
